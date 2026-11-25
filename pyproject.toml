@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "manage-dfir"
+version = "0.1.2"
+description = "Local DFIR workflow for an individual Evidence directory"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "dissect.target==3.25.1",
+    "flow.record==3.21",
+    "duckdb>=1.5,<2",
+]
+
+[project.scripts]
+dfir = "manage_dfir.cli:main"
+manage-dfir = "manage_dfir.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
