@@ -45,7 +45,7 @@ def _dissect_view(connection, parser, view):
 def _external_view(connection, parser):
     query = parser.view_query
     if "{output_sql}" in query:
-        query = query.replace("{output_sql}", _literal(parser.output.resolve().as_posix()))
+        query = query.replace("{output_sql}", _literal(parser.output.resolve().as_posix()).replace('.', '_'))
     connection.execute(f"SET schema = {_literal(parser.category)}")
     try:
         connection.execute(query)
@@ -65,7 +65,7 @@ def load(evidence: Path, parsers: list[Parser]) -> int:
             if not (parser.dissectable or parser.view_query):
                 continue
             schema = _identifier(parser.category)
-            view = f"{schema}.{_identifier(parser.name)}"
+            view = f"{schema}.{_identifier(parser.name).replace('.', '_')}"
             try:
                 connection.execute(f"CREATE SCHEMA IF NOT EXISTS {schema}")
                 if parser.output is not None and (
