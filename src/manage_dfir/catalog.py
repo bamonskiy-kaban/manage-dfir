@@ -35,7 +35,7 @@ def _dissect_compact_view(connection, parser, view):
     columns = list(parser.pinned_columns)
 
     excluded = ", ".join(
-        literal(name) for name in ["ts", *columns]
+        literal(name) for name in ["ts", "ts_description", *columns]
     )
 
     select_columns = [
@@ -70,7 +70,7 @@ def _dissect_compact_view(connection, parser, view):
 
     connection.execute(
         f"""
-        CREATE OR REPLACE VIEW {identifier(view)} AS
+        CREATE OR REPLACE VIEW {view} AS
         WITH source AS (
             SELECT
                 json AS doc,
