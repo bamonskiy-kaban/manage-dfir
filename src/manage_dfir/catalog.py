@@ -17,18 +17,70 @@ def _dissect_view(connection, parser, view):
         )"""
     ).fetchall()
     columns = {row[0]: row[1] for row in schema}
-    ts = next((name for name in columns if name.lower() == "ts"), "ts")
     column_types = ", ".join(f"{identifier(name)}: {literal("VARCHAR")}" for name, dtype in columns.items())
-    ts_expr = identifier(ts)
 
     connection.execute(f"""
         CREATE OR REPLACE VIEW {view} AS
-        SELECT CASE WHEN regexp_matches(substr({ts_expr}, 11), '[Zz+-]')
-                THEN timezone('UTC', TRY_CAST({ts_expr} AS TIMESTAMPTZ))
-                ELSE TRY_CAST({ts_expr} AS DATETIME)
-            END AS ts, * EXCLUDE(ts)
+        SELECT CASE WHEN regexp_matches(substr("ts", 11), '[Zz+-]')
+                THEN timezone('UTC', TRY_CAST("ts" AS TIMESTAMPTZ))
+                ELSE TRY_CAST("ts" AS DATETIME)
+            END AS "ts", * EXCLUDE(ts)
         FROM read_ndjson({literal(path)}, columns = {{{column_types}}})
     """)
+
+
+
+def _dissect_compact_view(connection, parser, view):
+    path = parser.output.resolve().as_posix()
+    columns = [col for col in parser.pinned_columns]
+    excluded = ", ".join(literal(name) for name in columns)
+    select_columns = [
+        """
+        CASE
+            WHEN regexp_matches(substr(ts, 11), '[Zz+-]')
+            THEN timezone('UTC', TRY_CAST("ts" AS TIMESTAMPTZ))
+            ELSE TRY_CAST("ts" AS TIMESTAMP)
+        END AS "ts"
+        """
+    ]
+    select_columns.extend(
+        f"""
+        json_extract_string(
+            doc, {literal('/' + name)}
+        ) AS {identifier(name)}
+        """
+        for name in columns
+    )
+    select_columns.append(
+        f"""
+        to_json(
+            map_from_entries(
+                list_filter(
+                    map_entries(
+                        CAST(doc AS MAP(VARCHAR, JSON))
+                    ),
+                    lambda x: x.key NOT IN ({excluded})
+                )
+            )
+        ) AS "extra"
+        """
+    )
+    projection = ",\n".join(select_columns)
+    connection.execute(
+        f"""
+        CREATE OR REPLACE VIEW {identifier(view)} AS 
+        WITH source AS (
+            SELECT json AS doc,
+                json_extract_string(
+                    json, "/ts"
+                ) AS "ts"
+            FROM read_ndjson_objects({literal(str(path))})
+        )
+        SELECT 
+            {projection}
+        FROM source
+        """
+    )
 
 
 def _external_view(connection, parser):
@@ -60,7 +112,10 @@ def load(evidence: Path, parsers: list[Parser]) -> int:
                     continue
 
                 if parser.dissectable:
-                    _dissect_view(connection, parser, view)
+                    if not parser.pinned_columns:
+                        _dissect_view(connection, parser, view)
+                    else:
+                        _dissect_compact_view(connection, parser, view)
                 else:
                     _external_view(connection, parser)
                 print(f"[ok] {parser.category}.{parser.name}")

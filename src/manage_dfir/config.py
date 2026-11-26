@@ -13,134 +13,135 @@ PARSERS = {
             {
                 "category": "logs",
                 "functions": [
-                    "evt",
-                    "evtx",
-                    "scraped_evtx"
+                    {"name": "evt", "pinned_columns": ("EventID", "Provider_Name", "Channel")},
+                    {"name": "evtx", "pinned_columns": ("EventID", "Provider_Name", "Channel")},
+                    {"name": "scraped_evt", "pinned_columns": ("EventID", "Provider_Name", "Channel")},
                 ]
             },
             {
                 "category": "persistence",
                 "functions": [
-                    "tasks",
-                    "runkeys",
-                    "services",
-                    "cim"
+                    {"name": "tasks"},
+                    {"name": "runkeys"},
+                    {"name": "services"},
+                    {"name": "cim"},
                 ]
             },
             {
                 "category": "config",
                 "functions": [
-                    "regf",
-                    "sam",
-                    "applications",
-                    "clsid"
+                    {"name": "regf"},
+                    {"name": "sam"},
+                    {"name": "applications"},
+                    {"name": "clsid"},
                 ]
             },
             {
                 "category": "filesystems",
                 "functions": [
-                    "recyclebin"
+                    {"name": "recyclebin"}
                 ]
             },
             {
                 "category": "amcache",
                 "functions": [
-                    "amcache.application_files",
-                    "amcache.applaunches",
-                    "amcache.device_containers",
-                    "amcache.drivers",
-                    "amcache.files",
-                    "amcache.general",
-                    "amcache.shortcuts"
+                    {"name": "amcache.application_files"},
+                    {"name": "amcache.applaunches"},
+                    {"name": "amcache.device_containers"},
+                    {"name": "amcache.drivers"},
+                    {"name": "amcache.files"},
+                    {"name": "amcache.general"},
+                    {"name": "amcache.shortcuts"}
                 ]
             },
             {
                 "category": "execution",
                 "functions": [
-                    "shimcache",
-                    "shellbags",
-                    "userassist",
-                    "bam",
-                    "prefetch",
-                    "lnk",
-                    "jumplist.automatic_destination",
-                    "jumplist.custom_destination",
-                    "powershell_history"
+                    {"name": "shimcache"},
+                    {"name": "shellbags"},
+                    {"name": "userassist"},
+                    {"name": "bam"},
+                    {"name": "prefetch"},
+                    {"name": "lnk"},
+                    {"name": "jumplist.automatic_destination"},
+                    {"name": "jumplist.custom_destination"},
+                    {"name": "powershell_history"}
                 ]
             },
             {
                 "category": "ual",
                 "functions": [
-                    "ual.client_access",
-                    "ual.domains_seen",
-                    "ual.role_access",
-                    "ual.system_identities",
-                    "ual.virtual_machines"
+                    {"name": "ual.client_access"},
+                    {"name": "ual.domains_seen"},
+                    {"name": "ual.role_access"},
+                    {"name": "ual.system_identities"},
+                    {"name": "ual.virtual_machines"}
                 ]
             },
             {
                 "category": "defender",
                 "functions": [
-                    "defender.exclusions",
-                    "defender.mpcmdrun",
-                    "defender.mplog"
+                    {"name": "defender.exclusions"},
+                    {"name": "defender.mpcmdrun"},
+                    {"name": "defender.mplog"}
                 ]
             },
             {
                 "category": "mru",
                 "functions": [
-                    "mru.acmru",
-                    "mru.lastvisited",
-                    "mru.msoffice",
-                    "mru.mstsc",
-                    "mru.networkdrive",
-                    "mru.opensave",
-                    "mru.recentdocs",
-                    "mru.run"
+                    {"name": "mru.acmru"},
+                    {"name": "mru.lastvisited"},
+                    {"name": "mru.msoffice"},
+                    {"name": "mru.mstsc"},
+                    {"name": "mru.networkdrive"},
+                    {"name": "mru.opensave"},
+                    {"name": "mru.recentdocs"},
+                    {"name": "mru.run"}
                 ]
             },
             {
                 "category": "firewall",
                 "functions": [
-                    "firewall.rules",
-                    "firewall.logs"
+                    {"name": "firewall.rules"},
+                    {"name": "firewall.logs"}
                 ]
             },
             {
                 "category": "browser",
                 "functions": [
-                    "browser.downloads",
-                    "browser.history",
-                    "browser.extensions",
-                    "browser.cookies",
-                    "browser.passwords"
+                    {"name": "browser.downloads"},
+                    {"name": "browser.history"},
+                    {"name": "browser.extensions"},
+                    {"name": "browser.cookies"},
+                    {"name": "browser.passwords"}
                 ]
             },
             {
                 "category": "webserver",
                 "functions": [
-                    "webserver.logs"
+                    {"name": "webserver.logs"}
                 ]
             },
             {
                 "category": "sru",
                 "functions": [
-                    "sru.application",
-                    "sru.application_timeline",
-                    "sru.energy_estimator",
-                    "sru.energy_usage",
-                    "sru.energy_usage_lt",
-                    "sru.network_connectivity",
-                    "sru.network_data",
-                    "sru.push_notification",
-                    "sru.sdp_cpu_provider",
-                    "sru.sdp_network_provider",
-                    "sru.sdp_physical_disk_provider",
-                    "sru.sdp_volume_provider",
-                    "sru.vfu",
+                    {"name": "sru.application"},
+                    {"name": "sru.application_timeline"},
+                    {"name": "sru.energy_estimator"},
+                    {"name": "sru.energy_usage"},
+                    {"name": "sru.energy_usage_lt"},
+                    {"name": "sru.network_connectivity"},
+                    {"name": "sru.network_data"},
+                    {"name": "sru.push_notification"},
+                    {"name": "sru.sdp_cpu_provider"},
+                    {"name": "sru.sdp_network_provider"},
+                    {"name": "sru.sdp_physical_disk_provider"},
+                    {"name": "sru.sdp_volume_provider"},
+                    {"name": "sru.vfu"},
                 ]
             }
         ],
+        #TODO: remove identifier calling
         "non_dissectable": [
             {
                 "name": "mft",
@@ -198,6 +199,7 @@ class Parser:
     name: str
     category: str
     output: Path | None
+    pinned_columns: tuple[str, ...] | None
     dissectable: bool = False
     command: tuple[str, ...] = ()
     view_query: str = ""
@@ -222,9 +224,10 @@ def get_parsers(evidence: Path, os_name: str, config_path: Path | None) -> list[
     for group in profile.get("dissectable", []):
         category = _safe_name(group["category"])
         for function in group["functions"]:
-            name = _safe_name(function)
+            name = _safe_name(function.get("name"))
+            pinned_columns = function.get("pinned_columns")
             output = evidence / "warehouse" / category / f"{name}.jsonl"
-            parsers.append(Parser(name, category, output, dissectable=True))
+            parsers.append(Parser(name, category, output, dissectable=True, pinned_columns=pinned_columns))
 
     for entry in profile.get("non_dissectable", []):
         name = _safe_name(entry["name"])
