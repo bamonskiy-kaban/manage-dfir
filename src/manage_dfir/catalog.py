@@ -29,15 +29,12 @@ def _dissect_view(connection, parser, view):
     column_types = ", ".join(f"{_identifier(name)}: {_literal(dtype)}" for name, dtype in columns.items())
     ts_expr = _identifier(ts)
 
-    # ISO timestamps with explicit offsets represent instants. Offset-free
-    # values keep their clock fields, independent of the client's TimeZone.
     connection.execute(f"""
         CREATE OR REPLACE VIEW {view} AS
-        SELECT * EXCLUDE ({ts_expr}),
-            CASE WHEN regexp_matches(substr({ts_expr}, 11), '[Zz+-]')
+        SELECT CASE WHEN regexp_matches(substr({ts_expr}, 11), '[Zz+-]')
                 THEN timezone('UTC', TRY_CAST({ts_expr} AS TIMESTAMPTZ))
                 ELSE TRY_CAST({ts_expr} AS DATETIME)
-            END AS ts
+            END AS ts, * EXCLUDE(ts)
         FROM read_ndjson({_literal(path)}, columns = {{{column_types}}})
     """)
 
