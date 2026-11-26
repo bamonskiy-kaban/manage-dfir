@@ -152,7 +152,7 @@ PARSERS = {
                     "'Is in use' AS is_inuse, 'Is directory' AS is_dir, 'Log file sequence number' AS LSN, Path AS path,"
                     "'$SI USN value' AS USN, 'File size' AS size, 'ADS list' AS ADS"
                     " FROM read_csv_auto({output_sql}, header = true, "
-                    "types = {mft_ref_num: 'UBIGINT', LSN: 'UBIGINT'})"
+                    "types = {'MFT reference number': 'UBIGINT', '$SI USN value': 'UBIGINT'})"
                 ),
             },
             # {
