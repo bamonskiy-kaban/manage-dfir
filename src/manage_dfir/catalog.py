@@ -18,8 +18,7 @@ def _dissect_view(connection, parser, view):
     ).fetchall()
     columns = {row[0]: row[1] for row in schema}
     ts = next((name for name in columns if name.lower() == "ts"), "ts")
-    columns[ts] = "VARCHAR"
-    column_types = ", ".join(f"{identifier(name)}: {literal(dtype)}" for name, dtype in columns.items())
+    column_types = ", ".join(f"{identifier(name)}: {literal("VARCHAR")}" for name, dtype in columns.items())
     ts_expr = identifier(ts)
 
     connection.execute(f"""
@@ -42,7 +41,7 @@ def _external_view(connection, parser):
 def load(evidence: Path, parsers: list[Parser]) -> int:
     import duckdb
 
-    database = evidence / "work" / "artifacts.duckdb"
+    database = evidence / "work" / "data.duckdb"
     database.parent.mkdir(parents=True, exist_ok=True)
     failures = 0
     # Relative paths in custom SQL are resolved from the Evidence directory.
@@ -50,10 +49,8 @@ def load(evidence: Path, parsers: list[Parser]) -> int:
         for parser in parsers:
             if not (parser.dissectable or parser.view_query):
                 continue
-            schema = identifier(parser.category)
-            view = f"{identifier(parser.name).replace('.', '_')}"
+            view = f"{parser.category}_{identifier(parser.name).replace('.', '_')}"
             try:
-                connection.execute(f"CREATE SCHEMA IF NOT EXISTS {schema}")
                 if parser.output is not None and (
                     not parser.output.is_file() or parser.output.stat().st_size == 0
                 ):
