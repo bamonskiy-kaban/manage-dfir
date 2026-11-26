@@ -319,8 +319,8 @@ def run_sigma(evidence: Path) -> None:
     runner = ProcessRunner(evidence)
     with log_path.open("wb") as log, staged_file(output) as staging:
         command = (
-            binary, "csv-timeline", "--directory", "01_target", "-o", str(staging),
-            "--ISO-8601", "-w", "-Q", "-q",
+            binary, "dfir-timeline", "--directory", "01_target", "-o", str(staging),
+            "-O", "-U", "-w", "-Q", "-q",
         )
         try:
             codes = _run_external(command, runner, log)
