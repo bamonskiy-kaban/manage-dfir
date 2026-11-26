@@ -32,10 +32,10 @@ def _dissect_view(connection, parser, view):
 
 def _dissect_compact_view(connection, parser, view):
     path = parser.output.resolve().as_posix()
-    columns = list(parser.pinned_columns)
+    columns = ["ts_description", *parser.pinned_columns]
 
     excluded = ", ".join(
-        literal(name) for name in ["ts", "ts_description", *columns]
+        literal(name) for name in ["ts", *columns]
     )
 
     select_columns = [
