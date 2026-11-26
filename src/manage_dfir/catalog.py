@@ -46,7 +46,7 @@ def _dissect_compact_view(connection, parser, view):
     select_columns.extend(
         f"""
         json_extract_string(
-            doc, {literal('/' + name)}
+            doc, {literal(name)}
         ) AS {identifier(name)}
         """
         for name in columns
@@ -72,7 +72,7 @@ def _dissect_compact_view(connection, parser, view):
         WITH source AS (
             SELECT json AS doc,
                 json_extract_string(
-                    json, "/ts"
+                    json, "ts"
                 ) AS "ts"
             FROM read_ndjson_objects({literal(str(path))})
         )
