@@ -161,7 +161,7 @@ PARSERS = {
                     f"{identifier("File size")} AS size, "
                     f"{identifier("ADS list" )} AS ADS"
                     " FROM read_csv_auto({output_sql}, header = true, "
-                    "types = {'MFT reference number': 'UBIGINT', '$SI USN value': 'UBIGINT'})"
+                    "types = {'MFT reference number': 'VARCHAR', '$SI USN value': 'VARCHAR'})"
                 ),
             },
             # {
