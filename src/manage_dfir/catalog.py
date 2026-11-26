@@ -49,7 +49,7 @@ def load(evidence: Path, parsers: list[Parser]) -> int:
         for parser in parsers:
             if not (parser.dissectable or parser.view_query):
                 continue
-            view = f"{parser.category}_{identifier(parser.name).replace('.', '_')}"
+            view = f"{identifier(parser.name).replace('.', '_')}"
             try:
                 if parser.output is not None and (
                     not parser.output.is_file() or parser.output.stat().st_size == 0
