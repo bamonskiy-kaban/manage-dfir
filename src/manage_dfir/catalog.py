@@ -65,7 +65,7 @@ def load(evidence: Path, parsers: list[Parser]) -> int:
             if not (parser.dissectable or parser.view_query):
                 continue
             schema = _identifier(parser.category)
-            view = f"{schema}.{_identifier(parser.name).replace('.', '_')}"
+            view = f"{_identifier(parser.name).replace('.', '_')}"
             try:
                 connection.execute(f"CREATE SCHEMA IF NOT EXISTS {schema}")
                 if parser.output is not None and (
