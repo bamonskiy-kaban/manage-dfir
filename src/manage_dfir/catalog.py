@@ -24,7 +24,7 @@ def _dissect_view(connection, parser, view):
         SELECT CASE WHEN regexp_matches(substr("ts", 11), '[Zz+-]')
                 THEN timezone('UTC', TRY_CAST("ts" AS TIMESTAMPTZ))
                 ELSE TRY_CAST("ts" AS DATETIME)
-            END AS "ts", * EXCLUDE(ts)
+            END AS "ts", * EXCLUDE("ts")
         FROM read_ndjson({literal(path)}, columns = {{{column_types}}})
     """)
 
@@ -33,13 +33,13 @@ def _dissect_view(connection, parser, view):
 def _dissect_compact_view(connection, parser, view):
     path = parser.output.resolve().as_posix()
     columns = [col for col in parser.pinned_columns]
-    excluded = ", ".join(literal(name) for name in columns)
+    excluded = ", ".join(literal(name) for name in ["ts", *columns])
     select_columns = [
         """
         CASE
-            WHEN regexp_matches(substr(ts, 11), '[Zz+-]')
+            WHEN regexp_matches(substr("ts", 11), '[Zz+-]')
             THEN timezone('UTC', TRY_CAST("ts" AS TIMESTAMPTZ))
-            ELSE TRY_CAST("ts" AS TIMESTAMP)
+            ELSE TRY_CAST("ts" AS DATETIME)
         END AS "ts"
         """
     ]
