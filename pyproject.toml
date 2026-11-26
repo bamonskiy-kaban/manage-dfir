@@ -9,8 +9,7 @@ description = "Local DFIR workflow for an individual Evidence directory"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
-    "dissect.target==3.25.1",
-    "flow.record==3.21",
+    "dissect>=3.22",
     "duckdb>=1.5,<2",
 ]
 
