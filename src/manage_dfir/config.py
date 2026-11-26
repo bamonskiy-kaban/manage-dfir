@@ -5,7 +5,7 @@ import runpy
 import shlex
 from dataclasses import dataclass
 from pathlib import Path
-from catalog import _identifier
+from .catalog import _identifier
 
 PARSERS = {
     "windows": {
