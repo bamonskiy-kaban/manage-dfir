@@ -241,7 +241,7 @@ def get_parsers(evidence: Path, os_name: str, config_path: Path | None) -> list[
         query = entry.get("duckdb_view_query", "").strip()
         if output is None and ("{output}" in command or "{output_sql}" in query):
             raise ValueError(f"{name}: set output before using an output path placeholder")
-        parsers.append(Parser(name, category, output, command=tuple(command), view_query=query))
+        parsers.append(Parser(name, category, output, command=tuple(command), view_query=query, pinned_columns=None))
 
     names = set()
     outputs = set()
