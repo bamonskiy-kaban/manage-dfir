@@ -164,13 +164,24 @@ PARSERS = {
                     "types = {'MFT reference number': 'VARCHAR', '$SI USN value': 'VARCHAR'})"
                 ),
             },
-            # {
-            #     "name": "usn",
-            #     "category": "filesystems",
-            #     "output": "warehouse/filesystems/usn.tsv",
-            #     "commandline": ["ntfs_parser", "--usn", "01_target/C/$MFT", "01_target/C/$Extend/$J", "{output}"],
-            #     "duckdb_view_query": ""
-            # },
+            {
+                "name": "usn",
+                "category": "filesystems",
+                "output": "warehouse/filesystems/usn.tsv",
+                "commandline": ["ntfs_parser", "--usn", "01_target/C/$MFT", "01_target/C/$Extend/$J", "{output}"],
+                "duckdb_view_query": (
+                    "CREATE OR REPLACE VIEW usn AS "
+                    "SELECT Timestamp AS ts,"
+                    "Source AS source,"
+                    "Reason AS reason,"
+                    f"{identifier("MFT reference number")} AS mft_ref_num,"
+                    f"{identifier("Parent MFT reference number")} AS parent_mft_ref_num,"
+                    f"{identifier("File name")} AS filename,"
+                    f"{identifier("File path (from $MFT)")} AS mft_filepath"
+                    " FROM read_csv_auto({output_sql}, header = true, "
+                    "types = {'MFT reference number': 'VARCHAR', 'Parent MFT reference number': 'VARCHAR'})"
+                )
+            },
         ],
     },
     "linux": {},
