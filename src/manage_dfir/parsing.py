@@ -133,6 +133,8 @@ def _run_dissect(name, evidence, output, log):
                     payload = packer.pack_obj(event)
                     for key in EXCLUDE_KEYS:
                         payload.pop(key, None)
+                    if not payload.get("ts"):
+                        payload["ts"] = "1970-01-01T00:00:00.000000"
                     output.write(encode(payload) + "\n")
     finally:
         root_logger.removeHandler(handler)
