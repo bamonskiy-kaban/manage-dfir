@@ -13,7 +13,7 @@ def _dissect_view(connection, parser, view):
     schema = connection.execute(
         f"""DESCRIBE SELECT * FROM read_ndjson(
             {literal(path)}, records = true, maximum_depth = 2,
-            map_inference_threshold = -1, field_appearance_threshold = 0
+            map_inference_threshold = -1, field_appearance_threshold = 0, sample_size = -1
         )"""
     ).fetchall()
     columns = {row[0]: row[1] for row in schema}
