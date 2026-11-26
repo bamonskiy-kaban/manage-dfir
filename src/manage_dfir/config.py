@@ -141,18 +141,27 @@ PARSERS = {
             }
         ],
         "non_dissectable": [
+            {
+                "name": "mft",
+                "category": "filesystems",
+                "output": "warehouse/filesystems/mft.tsv",
+                "commandline": ["ntfs_parser", "--mft-timeline", "01_target/C/$MFT", "{output}"],
+                "duckdb_view_query": (
+                    "CREATE OR REPLACE VIEW mft AS "
+                    "SELECT Timestamp AS ts, 'Timestamp Type' AS ts_description, Source AS record_type, 'MFT reference number' AS mft_ref_num,"
+                    "'Is in use' AS is_inuse, 'Is directory' AS is_dir, 'Log file sequence number' AS LSN, Path AS path,"
+                    "'$SI USN value' AS USN, 'File size' AS size, 'ADS list' AS ADS"
+                    " FROM read_csv_auto({output_sql}, header = true, "
+                    "types = {'MFT reference number': 'UBIGINT', 'Log file sequence number': 'UBIGINT'})"
+                ),
+            },
             # {
-            #     "name": "mft",
+            #     "name": "usn",
             #     "category": "filesystems",
-            #     "output": "warehouse/filesystems/mft.csv",
-            #     "commandline": ["ntfs_parser", "--mft-timeline", "01_target/C/$MFT", "{output}"],
-            #     "duckdb_view_query": (
-            #         "CREATE OR REPLACE VIEW mft AS "
-            #         "SELECT * FROM read_csv_auto({output_sql}, delim = '|', header = true, "
-            #         "types = {'MFT reference number': 'UBIGINT', 'Log file sequence number': 'UBIGINT'})"
-            #     ),
+            #     "output": "warehouse/filesystems/usn.tsv",
+            #     "commandline": ["ntfs_parser", "--usn", "01_target/C/$MFT", "01_target/C/$Extend/$J", "{output}"],
+            #     "duckdb_view_query": ""
             # },
-            # {"name": "usn", "category": "filesystems", "commandline": "", "duckdb_view_query": ""},
         ],
     },
     "linux": {},
