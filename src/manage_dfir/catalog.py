@@ -37,9 +37,9 @@ def _dissect_compact_view(connection, parser, view):
     select_columns = [
         """
         CASE
-            WHEN regexp_matches(substr("ts", 11), '[Zz+-]')
-            THEN timezone('UTC', TRY_CAST("ts" AS TIMESTAMPTZ))
-            ELSE TRY_CAST("ts" AS DATETIME)
+            WHEN regexp_matches(substr("raw_ts", 11), '[Zz+-]')
+            THEN timezone('UTC', TRY_CAST("raw_ts" AS TIMESTAMPTZ))
+            ELSE TRY_CAST("raw_ts" AS DATETIME)
         END AS "ts"
         """
     ]
@@ -73,7 +73,7 @@ def _dissect_compact_view(connection, parser, view):
             SELECT json AS doc,
                 json_extract_string(
                     json, "ts"
-                ) AS "ts"
+                ) AS "raw_ts"
             FROM read_ndjson_objects({literal(str(path))})
         )
         SELECT 
