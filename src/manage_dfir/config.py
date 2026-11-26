@@ -5,7 +5,7 @@ import runpy
 import shlex
 from dataclasses import dataclass
 from pathlib import Path
-from .catalog import _identifier
+from .utils import identifier
 
 PARSERS = {
     "windows": {
@@ -150,16 +150,16 @@ PARSERS = {
                 "duckdb_view_query": (
                     "CREATE OR REPLACE VIEW mft AS "
                     "SELECT Timestamp AS ts, "
-                    f"{_identifier("Timestamp Type")} AS ts_description, "
+                    f"{identifier("Timestamp Type")} AS ts_description, "
                     f"Source AS record_type, "
-                    f"{_identifier("MFT reference number")} AS mft_ref_num,"
-                    f"{_identifier("Is in use")} AS is_inuse, "
-                    f"{_identifier("Is directory")} AS is_dir, "
-                    f"{_identifier("Log file sequence number")} AS LSN, "
+                    f"{identifier("MFT reference number")} AS mft_ref_num,"
+                    f"{identifier("Is in use")} AS is_inuse, "
+                    f"{identifier("Is directory")} AS is_dir, "
+                    f"{identifier("Log file sequence number")} AS LSN, "
                     "Path AS path,"
-                    f"{_identifier("$SI USN value")} AS USN, "
-                    f"{_identifier("File size")} AS size, "
-                    f"{_identifier("ADS list" )} AS ADS"
+                    f"{identifier("$SI USN value")} AS USN, "
+                    f"{identifier("File size")} AS size, "
+                    f"{identifier("ADS list" )} AS ADS"
                     " FROM read_csv_auto({output_sql}, header = true, "
                     "types = {'MFT reference number': 'UBIGINT', '$SI USN value': 'UBIGINT'})"
                 ),
