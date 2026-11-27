@@ -8,7 +8,7 @@ from .config import Parser
 from .utils import identifier, literal
 
 
-def _dissect_view(connection, parser, view):
+def _dissect_table(connection, parser, table):
     path = parser.output.resolve().as_posix()
     schema = connection.execute(
         f"""DESCRIBE SELECT * FROM read_ndjson(
@@ -20,7 +20,7 @@ def _dissect_view(connection, parser, view):
     column_types = ", ".join(f"{identifier(name)}: {literal("VARCHAR")}" for name, dtype in columns.items())
 
     connection.execute(f"""
-        CREATE OR REPLACE VIEW {view} AS
+        CREATE OR REPLACE TABLE {table} AS
         SELECT CASE WHEN regexp_matches(substr(ts, 11), '[Zz+-]')
                 THEN timezone('UTC', TRY_CAST(ts AS TIMESTAMPTZ))
                 ELSE TRY_CAST(ts AS DATETIME)
@@ -30,7 +30,7 @@ def _dissect_view(connection, parser, view):
 
 
 
-def _dissect_compact_view(connection, parser, view):
+def _dissect_compact_table(connection, parser, table):
     path = parser.output.resolve().as_posix()
     columns = ["ts_description", *parser.pinned_columns]
 
@@ -70,7 +70,7 @@ def _dissect_compact_view(connection, parser, view):
 
     connection.execute(
         f"""
-        CREATE OR REPLACE VIEW {view} AS
+        CREATE OR REPLACE TABLE {table} AS
         WITH source AS (
             SELECT
                 json AS doc,
@@ -83,7 +83,7 @@ def _dissect_compact_view(connection, parser, view):
         """
     )
 
-def _external_view(connection, parser):
+def _external_table(connection, parser):
     query = parser.view_query
     if "{output_sql}" in query:
         query = query.replace("{output_sql}", literal(parser.output.resolve().as_posix()))
@@ -107,17 +107,17 @@ def load(evidence: Path, parsers: list[Parser]) -> int:
                     not parser.output.is_file() or parser.output.stat().st_size == 0
                 ):
                     # Remove the configured view if a previous load registered this source.
-                    connection.execute(f"DROP VIEW IF EXISTS {view}")
+                    connection.execute(f"DROP TABLE IF EXISTS {view}")
                     print(f"[skip] {parser.category}.{parser.name} (source file is missing or empty)")
                     continue
 
                 if parser.dissectable:
                     if not parser.pinned_columns:
-                        _dissect_view(connection, parser, view)
+                        _dissect_table(connection, parser, view)
                     else:
-                        _dissect_compact_view(connection, parser, view)
+                        _dissect_compact_table(connection, parser, view)
                 else:
-                    _external_view(connection, parser)
+                    _external_table(connection, parser)
                 print(f"[ok] {parser.category}.{parser.name}")
             except Exception as exc:
                 failures += 1

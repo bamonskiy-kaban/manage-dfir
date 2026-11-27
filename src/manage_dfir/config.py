@@ -148,8 +148,8 @@ PARSERS = {
                 "category": "filesystems",
                 "output": "warehouse/filesystems/mft.tsv",
                 "commandline": ["ntfs_parser", "--mft-timeline", "01_target/C/$MFT", "{output}"],
-                "duckdb_view_query": (
-                    "CREATE OR REPLACE VIEW mft AS "
+                "duckdb_load_query": (
+                    "CREATE OR REPLACE TABLE mft AS "
                     "SELECT Timestamp AS ts, "
                     f"{identifier("Timestamp Type")} AS ts_description, "
                     f"Source AS record_type, "
@@ -170,8 +170,8 @@ PARSERS = {
                 "category": "filesystems",
                 "output": "warehouse/filesystems/usn.tsv",
                 "commandline": ["ntfs_parser", "--usn", "01_target/C/$MFT", "01_target/C/$Extend/$J", "{output}"],
-                "duckdb_view_query": (
-                    "CREATE OR REPLACE VIEW usn AS "
+                "duckdb_load_query": (
+                    "CREATE OR REPLACE TABLE usn AS "
                     "SELECT Timestamp AS ts,"
                     "Source AS source,"
                     "Reason AS reason,"
@@ -238,7 +238,7 @@ def get_parsers(evidence: Path, os_name: str, config_path: Path | None) -> list[
         if not isinstance(command, (list, tuple)) or any(not isinstance(arg, str) for arg in command):
             raise ValueError(f"{name}: commandline must be a string or a list of strings")
         output = evidence / entry["output"] if entry.get("output") else None
-        query = entry.get("duckdb_view_query", "").strip()
+        query = entry.get("duckdb_load_query", "").strip()
         if output is None and ("{output}" in command or "{output_sql}" in query):
             raise ValueError(f"{name}: set output before using an output path placeholder")
         parsers.append(Parser(name, category, output, command=tuple(command), view_query=query, pinned_columns=None))

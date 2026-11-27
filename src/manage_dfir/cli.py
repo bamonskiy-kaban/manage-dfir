@@ -47,7 +47,7 @@ def main(argv: list[str] | None = None) -> int:
     commands.add_parser("init", help="Collect host metadata")
     commands.add_parser("parse_triage", help="Run the parsers configured for the host OS")
     commands.add_parser("sigma", help="Run Hayabusa on Windows evidence")
-    commands.add_parser("load", help="Create DuckDB views")
+    commands.add_parser("load", help="Create DuckDB tables")
     args = parser.parse_args(argv)
 
     try:
