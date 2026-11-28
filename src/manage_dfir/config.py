@@ -221,12 +221,12 @@ PARSERS = {
                     {"name": "utmp"},
                     {"name": "messages"},
                     {"name": "syslog"},
-                    {"name", "lastlog"},
-                    {"name", "journal"},
-                    {"name", "securelog"},
-                    {"name", "authlog"},
-                    {"name", "audit"},
-                    {"name", "atop"},
+                    {"name": "lastlog"},
+                    {"name": "journal"},
+                    {"name": "securelog"},
+                    {"name": "authlog"},
+                    {"name": "audit"},
+                    {"name": "atop"},
                 ]
             },
             {
