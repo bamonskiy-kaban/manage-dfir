@@ -260,8 +260,11 @@ def parse_triage(evidence: Path, parsers: list[Parser]) -> int:
             context = multiprocessing.get_context("spawn")
             stop = context.Event()
             native = stack.enter_context(ProcessPoolExecutor(
-                max_workers=min(jobs, native_count), mp_context=context,
-                initializer=_init_dissect_worker, initargs=(stop,),
+                max_workers=min(jobs, native_count),
+                mp_context=context,
+                initializer=_init_dissect_worker,
+                initargs=(stop,),
+                max_tasks_per_child=1,
             ))
         if external_count:
             external = stack.enter_context(ThreadPoolExecutor(max_workers=min(jobs, external_count)))
