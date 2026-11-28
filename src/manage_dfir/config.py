@@ -7,6 +7,9 @@ from dataclasses import dataclass
 from pathlib import Path
 from .utils import identifier
 
+
+#TODO: build non dissectable outputs dynamically
+
 PARSERS = {
     "windows": {
         "dissectable": [
@@ -318,7 +321,8 @@ PARSERS = {
                 "name": "bodyfile",
                 "category": "filesystems",
                 "output": "warehouse/filesystems/bodyfile.csv",
-                "commandline": ["mactime", "-b", "01_target/bodyfile/bodyfile.txt", "-z", "GMT", "-d", "-y", "> {output}"],
+                "redirect": True,
+                "commandline": ["mactime", "-b", "01_target/bodyfile/bodyfile.txt", "-z", "GMT", "-d", "-y"],
                 "duckdb_load_query": (
                     "CREATE OR REPLACE TABLE bodyfile AS "
                     "SELECT Date AS ts, "
