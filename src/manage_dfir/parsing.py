@@ -141,10 +141,10 @@ def _run_dissect(name, evidence, output, log):
         handler.close()
 
 
-def _run_external(command, runner, log, output):
+def _run_external(command, runner, log, redirect):
     if "/" in command[0] or os.sep in command[0]:
         command = (str((runner.evidence / command[0]).resolve()), *command[1:])
-    with runner.start(command, stdin=subprocess.DEVNULL, stdout=output if output else log, stderr=log) as process:
+    with runner.start(command, stdin=subprocess.DEVNULL, stdout=redirect if redirect else log, stderr=log) as process:
         return {Path(command[0]).name: process.wait()}
 
 
@@ -186,8 +186,7 @@ def _run_parser(parser, evidence, log_dir, runner=None):
                 codes = {}
             else:
                 command = [str(staging) if arg == "{output}" else arg for arg in parser.command]
-                output = parser.get("output") if parser.get("redirect") else None
-                codes = _run_external(command, runner, log, output)
+                codes = _run_external(command, runner, log, str(staging) if parser.get("redirect") else None)
 
             outcome.exit_codes = " ".join(f"{program}={code}" for program, code in codes.items())
             if any(code != 0 for code in codes.values()):
