@@ -309,7 +309,7 @@ PARSERS = {
                 "category": "config",
                 "functions": [
                     {"name": "passwords"},
-                    {"name": "env"}
+                    {"name": "environ"}
                 ]
             }
         ],
