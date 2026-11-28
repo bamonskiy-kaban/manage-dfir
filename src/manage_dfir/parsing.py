@@ -301,7 +301,7 @@ def parse_triage(evidence: Path, parsers: list[Parser]) -> int:
                 future.cancel()
             raise
 
-    summary = log_dir / "parsing_log.csv"
+    summary = log_dir / "00_parsing_log.csv"
     with staged_file(summary) as staging:
         with staging.open("w", encoding="utf-8", newline="") as stream:
             writer = csv.DictWriter(stream, fieldnames=[field.name for field in fields(Outcome)])
