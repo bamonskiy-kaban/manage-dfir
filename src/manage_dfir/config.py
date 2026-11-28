@@ -119,7 +119,9 @@ PARSERS = {
             {
                 "category": "webserver",
                 "functions": [
-                    {"name": "webserver.logs"}
+                    {"name": "webserver.access"},
+                    {"name": "webserver.error"},
+                    {"name": "webserver.hosts"},
                 ]
             },
             {
@@ -139,9 +141,33 @@ PARSERS = {
                     {"name": "sru.sdp_volume_provider"},
                     {"name": "sru.vfu"},
                 ]
+            },
+            {
+                "category": "ssh",
+                "functions": [
+                    {"name": "ssh.authroized_keys"},
+                    {"name": "ssh.known_hosts"},
+                    {"name": "opensshd.config"},
+                    {"name": "putty.known_hosts"},
+                    {"name": "putty.sessions"},
+                ]
+            },
+            {
+                "category": "vpn",
+                "functions": [
+                    {"name": "openvpn.config"},
+                    {"name": "wireguard.config"},
+                ]
+            },
+            {
+                "category": "vmware_ws",
+                "functions": [
+                    {"name": "vmware.clipboard"},
+                    {"name": "vmware.config"},
+                    {"name": "vmware.draganddrop"},
+                ]
             }
         ],
-        #TODO: remove identifier calling
         "non_dissectable": [
             {
                 "name": "mft",
@@ -151,16 +177,16 @@ PARSERS = {
                 "duckdb_load_query": (
                     "CREATE OR REPLACE TABLE mft AS "
                     "SELECT Timestamp AS ts, "
-                    f"{identifier("Timestamp Type")} AS ts_description, "
-                    f"Source AS record_type, "
-                    f"{identifier("MFT reference number")} AS mft_ref_num,"
-                    f"{identifier("Is in use")} AS is_inuse, "
-                    f"{identifier("Is directory")} AS is_dir, "
-                    f"{identifier("Log file sequence number")} AS LSN, "
+                    "\"Timestamp Type\" AS ts_description, "
+                    "Source AS record_type, "
+                    "\"MFT reference number\" AS mft_ref_num,"
+                    "\"Is in use\" AS is_inuse, "
+                    "\"Is directory\" AS is_dir, "
+                    "\"Log file sequence number\" AS LSN, "
                     "Path AS path,"
-                    f"{identifier("$SI USN value")} AS USN, "
-                    f"{identifier("File size")} AS size, "
-                    f"{identifier("ADS list" )} AS ADS"
+                    "\"$SI USN value\" AS USN, "
+                    "\"File size\" AS size, "
+                    "\"ADS list\" AS ADS"
                     " FROM read_csv_auto({output_sql}, header = true, "
                     "types = {'MFT reference number': 'VARCHAR', '$SI USN value': 'VARCHAR'})"
                 ),
@@ -175,17 +201,138 @@ PARSERS = {
                     "SELECT Timestamp AS ts,"
                     "Source AS source,"
                     "Reason AS reason,"
-                    f"{identifier("MFT reference number")} AS mft_ref_num,"
-                    f"{identifier("Parent MFT reference number")} AS parent_mft_ref_num,"
-                    f"{identifier("File name")} AS filename,"
-                    f"{identifier("File path (from $MFT)")} AS mft_filepath"
+                    "\"MFT reference number\" AS mft_ref_num,"
+                    "\"Parent MFT reference number\" AS parent_mft_ref_num,"
+                    "\"File name\" AS filename,"
+                    "\"File path (from $MFT)\" AS mft_filepath"
                     " FROM read_csv_auto({output_sql}, header = true, "
                     "types = {'MFT reference number': 'VARCHAR', 'Parent MFT reference number': 'VARCHAR'})"
                 )
             },
         ],
     },
-    "linux": {},
+    "linux": {
+        "dissectable": [
+            {
+                "category": "logs",
+                "functions": [
+                    {"name": "wtmp"},
+                    {"name": "btmp"},
+                    {"name": "utmp"},
+                    {"name": "messages"},
+                    {"name": "syslog"},
+                    {"name", "lastlog"},
+                    {"name", "journal"},
+                    {"name", "securelog"},
+                    {"name", "authlog"},
+                    {"name", "audit"},
+                    {"name", "atop"},
+                ]
+            },
+            {
+                "category": "packagemanager",
+                "functions": [
+                    {"name": "packagemanager.logs"}
+                ]
+            },
+            {
+                "category": "persistence",
+                "functions": [
+                    {"name": "services"},
+                    {"name": "cronjobs"}
+                ]
+            },
+            {
+                "category": "firewall",
+                "functions": [
+                    {"name": "iptables"}
+                ]
+            },
+            {
+                "category": "execution",
+                "functions": [
+                    {"name": "bashhistory"},
+                    {"name": "wget"},
+                ]
+            },
+            {
+                "category": "esxi",
+                "functions": [
+                    {"name": "vm.inventory"},
+                    {"name": "vm.orphan"},
+                ]
+            },
+            {
+                "category": "vmware_ws",
+                "functions": [
+                    {"name": "vmware.clipboard"},
+                    {"name": "vmware.config"},
+                    {"name": "vmware.draganddrop"},
+                ]
+            },
+            {
+                "category": "browser",
+                "functions": [
+                    {"name": "browser.downloads"},
+                    {"name": "browser.history"},
+                    {"name": "browser.extensions"},
+                    {"name": "browser.cookies"},
+                    {"name": "browser.passwords"}
+                ]
+            },
+            {
+                "category": "webserver",
+                "functions": [
+                    {"name": "webserver.access"},
+                    {"name": "webserver.error"},
+                    {"name": "webserver.hosts"},
+                ]
+            },
+            {
+                "category": "ssh",
+                "functions": [
+                    {"name": "ssh.authroized_keys"},
+                    {"name": "ssh.known_hosts"},
+                    {"name": "opensshd.config"},
+                    {"name": "putty.known_hosts"},
+                    {"name": "putty.sessions"},
+                ]
+            },
+            {
+                "category": "vpn",
+                "functions": [
+                    {"name": "openvpn.config"},
+                    {"name": "wireguard.config"},
+                ]
+            },
+            {
+                "category": "config",
+                "functions": [
+                    {"name": "passwords"},
+                    {"name": "env"}
+                ]
+            }
+        ],
+        "non_dissectable": [
+            {
+                "name": "mft",
+                "category": "filesystems",
+                "output": "warehouse/filesystems/bodyfile.csv",
+                "commandline": [],
+                "duckdb_load_query": (
+                    "CREATE OR REPLACE TABLE bodyfile AS "
+                    "SELECT Date AS ts, "
+                    "Type AS ts_description, "
+                    "Mode AS mode, "
+                    "UID AS uid,"
+                    "GID AS gid, "
+                    "Meta as meta, "
+                    "\"File Name\" AS path "
+                    "FROM read_csv_auto({output_sql}, header = true)"
+                ),
+            },
+        ]
+    },
 }
 
 EXCLUDE_KEYS = (
