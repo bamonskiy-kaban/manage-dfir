@@ -145,7 +145,7 @@ PARSERS = {
             {
                 "category": "ssh",
                 "functions": [
-                    {"name": "ssh.authroized_keys"},
+                    {"name": "ssh.authorized_keys"},
                     {"name": "ssh.known_hosts"},
                     {"name": "opensshd.config"},
                     {"name": "putty.known_hosts"},
@@ -291,7 +291,7 @@ PARSERS = {
             {
                 "category": "ssh",
                 "functions": [
-                    {"name": "ssh.authroized_keys"},
+                    {"name": "ssh.authorized_keys"},
                     {"name": "ssh.known_hosts"},
                     {"name": "opensshd.config"},
                     {"name": "putty.known_hosts"},
